@@ -76,12 +76,12 @@ public class KafkaConsumerOffsetUtil {
         List<String> partitions = new ArrayList<String>();
         for (String consumerGroup : activeSpoutConsumerGroupList) {
             try {
-                partitions = zkClient.getChildren("/" + consumerGroup);
+                partitions = zkClient.getChildren(kafkaConfiguration.getStormZkRoot() + "/" + consumerGroup);
             } catch (Exception e) {
-                LOG.error("Error while listing partitions for the consumer group: " + consumerGroup);
+                LOG.error("Error while listing partitions for the consumer group: " + consumerGroup + " " + e.getMessage());
             }
             for (String partition : partitions) {
-                byte[] byteData = zkClient.getData("/" + consumerGroup + "/" + partition);
+                byte[] byteData = zkClient.getData(kafkaConfiguration.getStormZkRoot() + "/" + consumerGroup + "/" + partition);
                 String data = "";
                 if (byteData != null) {
                     data = new String(byteData);

@@ -21,6 +21,20 @@ public class KafkaMonitorConfiguration extends Configuration {
     @Valid
     private String statsDPrefix = "kafka-monitoring";
 
+    /**
+     * The Zkroot will be used as root to store your consumer's offset. The id should uniquely identify your spout.
+     */
+    @Valid
+    private String stormZkRoot = "/kafkastorm";
+
+    public String getStormZkRoot() {
+        return stormZkRoot;
+    }
+
+    public void setStormZkRoot(String stormZkRoot) {
+        this.stormZkRoot = stormZkRoot;
+    }
+
     @Valid
     private boolean pushToStatsD = false;
 

@@ -63,7 +63,7 @@ public class ZKClient implements Managed {
     }
 
     public List<String> getActiveSpoutConsumerGroups() throws Exception {
-        List<String> rootChildren = (client.getChildren().forPath("/"));
+        List<String> rootChildren = (client.getChildren().forPath(kafkaConfiguration.getStormZkRoot()));
         List<String> activeSpoutConsumerGroupList = new ArrayList<String>();
         for(String rootChild : rootChildren) {
             if(!nonSpoutConsumerNodes.contains(rootChild)) {

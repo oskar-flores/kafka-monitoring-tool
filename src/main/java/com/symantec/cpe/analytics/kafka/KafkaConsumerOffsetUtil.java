@@ -33,21 +33,22 @@ public class KafkaConsumerOffsetUtil {
     private StatsDClient statsd = null;
     private static final String clientName = "GetOffsetClient";
     private KafkaMonitorConfiguration kafkaConfiguration;
-    private static KafkaConsumerOffsetUtil kafkaConsumerOffsetUtil = null;
+    private static KafkaConsumerOffsetUtil kafkaConsumerOffsetUtil;
     private ZKClient zkClient;
-    private static ZkClient iotecZkClient;
+    private ZkClient iotecZkClient;
 
-    public static KafkaConsumerOffsetUtil getInstance(KafkaMonitorConfiguration kafkaConfiguration, ZKClient zkClient) {
-        if(kafkaConsumerOffsetUtil == null) {
+    public static synchronized KafkaConsumerOffsetUtil getInstance(KafkaMonitorConfiguration kafkaConfiguration, ZKClient zkClient) {
+        if (kafkaConsumerOffsetUtil == null) {
             kafkaConsumerOffsetUtil = new KafkaConsumerOffsetUtil(kafkaConfiguration, zkClient);
         }
-        iotecZkClient = new ZkClient(kafkaConfiguration.getZookeeperUrls(), 5000, 5000, ZKStringSerializer$.MODULE$);
         return kafkaConsumerOffsetUtil;
     }
 
     private KafkaConsumerOffsetUtil(KafkaMonitorConfiguration kafkaConfiguration, ZKClient zkClient) {
         this.kafkaConfiguration = kafkaConfiguration;
         this.zkClient = zkClient;
+        this.iotecZkClient = new ZkClient(kafkaConfiguration.getZookeeperUrls());
+        this.iotecZkClient.setZkSerializer(ZKStringSerializer$.MODULE$);
     }
 
     public void setupMonitoring() {

@@ -17,7 +17,7 @@ public class ZKClient implements Managed {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZKClient.class);
     private KafkaMonitorConfiguration kafkaConfiguration;
-    private RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
+    private RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 15, 15000);
     private CuratorFramework client;
     private static final List<String> nonSpoutConsumerNodes = Arrays.asList("storm", "config", "consumers", "controller_epoch", "zookeeper", "admin", "controller", "brokers");
 

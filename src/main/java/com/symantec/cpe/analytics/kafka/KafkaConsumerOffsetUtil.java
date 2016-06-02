@@ -105,7 +105,10 @@ public class KafkaConsumerOffsetUtil {
         List<KafkaConsumerGroupMetadata> kafkaConsumerGroupMetadataList = zkClient.getActiveRegularConsumersAndTopics();
         List<KafkaOffsetMonitor> kafkaOffsetMonitors = new ArrayList<KafkaOffsetMonitor>();
         List<Broker> kafkaBrokers = getAllBrokers();
-        SimpleConsumer consumer = getConsumer(kafkaBrokers.get(1).host(), kafkaBrokers.get(1).port(), clientName);
+        if (kafkaBrokers.size() == 0)
+            throw new Exception("No brokers found");
+        Broker randomBroker = kafkaBrokers.get(kafkaBrokers.size() > 1 ? new Random().nextInt(kafkaBrokers.size() - 1) : 0);
+        SimpleConsumer consumer = getConsumer(randomBroker.host(), randomBroker.port(), clientName);
         for (KafkaConsumerGroupMetadata kafkaConsumerGroupMetadata : kafkaConsumerGroupMetadataList) {
             List<TopicPartitionLeader> partitions = getPartitions(consumer, kafkaConsumerGroupMetadata.getTopic());
             for (TopicPartitionLeader partition : partitions) {

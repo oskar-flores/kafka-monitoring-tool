@@ -9,21 +9,36 @@ import com.symantec.cpe.analytics.core.kafka.TopicPartitionLeader;
 import com.symantec.cpe.analytics.core.managed.ZKClient;
 import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
+
+import org.apache.commons.lang3.StringUtils;
+
+import org.I0Itec.zkclient.ZkClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import kafka.api.PartitionOffsetRequestInfo;
 import kafka.cluster.Broker;
 import kafka.common.TopicAndPartition;
-import kafka.javaapi.*;
+import kafka.javaapi.OffsetResponse;
+import kafka.javaapi.PartitionMetadata;
+import kafka.javaapi.TopicMetadata;
+import kafka.javaapi.TopicMetadataRequest;
+import kafka.javaapi.TopicMetadataResponse;
 import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.utils.ZKStringSerializer$;
 import kafka.utils.ZkUtils;
-import org.I0Itec.zkclient.ZkClient;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import scala.collection.JavaConversions;
-
-import java.util.*;
-import java.util.concurrent.*;
 
 
 public class KafkaConsumerOffsetUtil {
@@ -225,7 +240,7 @@ public class KafkaConsumerOffsetUtil {
         }
         for (KafkaOffsetMonitor kafkaOffsetMonitor : kafkaOffsetMonitors) {
             String statsDSeriesName = kafkaOffsetMonitor.getConsumerGroupName() + "."
-                    + kafkaOffsetMonitor.getTopic() + "." + kafkaOffsetMonitor.getPartition();
+                    + kafkaOffsetMonitor.getTopic() + ",Partition=" + kafkaOffsetMonitor.getPartition();
             LOG.info(prefix + "." + statsDSeriesName + ".topic_offset: " + kafkaOffsetMonitor.getLogSize());
             statsd.gauge(statsDSeriesName + ".topic_offset", kafkaOffsetMonitor.getLogSize());
             LOG.info(prefix + "." + statsDSeriesName + ".consumer_offset: " + kafkaOffsetMonitor.getConsumerOffset());
